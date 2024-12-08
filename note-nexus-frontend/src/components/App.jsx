@@ -7,6 +7,7 @@ import ProtectedLayout from './ProtectedLayout';
 import Login from './Login';
 import Home from './Home';
 import AddNote from './AddNote';
+import ViewNotes from './ViewNotes';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/login" element={<Login/>}/>
           <Route path="/home" element={<Home/>}/>
           <Route path="/add-note" element={<AddNote/>}/>
+          <Route path="/view-notes" element={<ViewNotes />} />
         </Route>
       </Routes>
     </div>
