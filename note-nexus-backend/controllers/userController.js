@@ -118,6 +118,7 @@ const view_notes = async (req, res) => {
   }
 };
 
+
 const view_note_by_id = async (req, res) => {
   const { noteid } = req.params;
 
@@ -194,6 +195,7 @@ const delete_note = async (req, res) => {
     });
   }
 };
+
 
 const getUserProfile = async (req, res) => {
   try {
@@ -285,6 +287,7 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+
 const updatePassword = async (req, res) => {
   try {
     const { uname } = req.params;
@@ -314,4 +317,4 @@ const updatePassword = async (req, res) => {
 };
 
 
-module.exports = { signup, signin, add_note, view_notes, view_note_by_id, edit_note, delete_note, updateUserProfile, updatePassword};
+module.exports = { signup, signin, add_note, view_notes, view_note_by_id, edit_note, delete_note, getUserProfile, updatePassword, updateUserProfile};
