@@ -195,5 +195,27 @@ const delete_note = async (req, res) => {
   }
 };
 
+const getUserProfile = async (req, res) => {
+  try {
+    const { uname } = req.params; 
 
-module.exports = { signup, signin, add_note, view_notes, view_note_by_id, edit_note };
+    const user = await User.findOne({ uname });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      name: user.name,
+      email: user.email,
+      mobile: user.mobile,
+      uname: user.uname,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching user profile", error: error.message });
+  }
+};
+
+
+module.exports = { signup, signin, add_note, view_notes, view_note_by_id, edit_note, delete_note };
