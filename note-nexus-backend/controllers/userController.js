@@ -159,5 +159,41 @@ const edit_note = async (req, res) => {
   }
 };
 
+const delete_note = async (req, res) => {
+  const { id } = req.params; 
+  const { username } = req.query;
+
+  try {
+    const note = await Note.findById(id);
+
+    if (!note) {
+      return res.status(404).json({
+        success: true,
+        message: "Note not found",
+      });
+    }
+
+    if (note.owner_username !== username) {
+      return res.status(403).json({
+        success: true,
+        message: "You are not authorized to delete this note",
+      });
+    }
+
+    await Note.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Note successfully deleted",
+    });
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: "Server error. Could not delete note",
+    });
+  }
+};
+
 
 module.exports = { signup, signin, add_note, view_notes, view_note_by_id, edit_note };
