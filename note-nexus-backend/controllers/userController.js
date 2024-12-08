@@ -58,4 +58,47 @@ const signin = async (req, res) => {
   }
 };
 
-module.exports = { signup, signin };
+const add_note = async (req, res) => {
+  try {
+
+    const { title, content, visibility } = req.body;
+    
+    const owner = req.body.owner ;
+    const uname = req.body.uname ;
+
+    if (!title || !content || !visibility) {
+      return res.status(400).json({ message: "Missing required fields: title, content, visibility" });
+    }
+
+    if (!owner || !uname) {
+      return res.status(400).json({ message: "Owner or Username is missing" });
+    }
+
+    const newNote = new Note({
+      title,
+      content,
+      owner,
+      owner_username: uname,
+      visibility, 
+      lastEditedBy: owner
+    });
+
+    const savedNote = await newNote.save();
+
+    res.status(201).json({
+      message: 'Note added successfully',
+      note: savedNote,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: 'Error adding note',
+      error: error.message,
+      stack: error.stack, 
+    });
+  }
+};
+
+module.exports = { signup, signin, add_note };
