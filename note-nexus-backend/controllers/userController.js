@@ -285,4 +285,33 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { signup, signin, add_note, view_notes, view_note_by_id, edit_note, delete_note, updateUserProfile };
+const updatePassword = async (req, res) => {
+  try {
+    const { uname } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await User.findOne({ uname });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error updating password", error: error.message });
+  }
+};
+
+
+module.exports = { signup, signin, add_note, view_notes, view_note_by_id, edit_note, delete_note, updateUserProfile, updatePassword};
