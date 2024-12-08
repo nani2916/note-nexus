@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "react-quill/dist/quill.snow.css"; 
 import ReactQuill from "react-quill";
 import { BASE_URL } from "../config";
@@ -15,6 +16,7 @@ const AddNote = () => {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
+    visibility: "private", 
   });
 
   const modules = {
@@ -52,9 +54,7 @@ const AddNote = () => {
   const load = () => {
     return (
       <div
-        className={`flex justify-center items-center h-screen ${
-          loading ? "block" : "hidden"
-        }`}
+        className={`flex justify-center items-center h-screen ${loading ? "block" : "hidden"}`}
       >
         <div className="bg-white p-5 rounded-lg">
           <BeatLoader loading={loading} className="text-cyan-900 text-3xl" />
@@ -69,24 +69,36 @@ const AddNote = () => {
     setLoading(true);
   
     const owner = localStorage.getItem("name");
+    const uname = localStorage.getItem("username");
+
   
     try {
       const response = await axios.post(`${BASE_URL}/api/user/add-note`, {
         ...formData,
-        owner, 
+        owner,
+        uname 
       });
       
-      toast.success(response.data.message);
+      toast.success(response.data.message, {
+        position: "top-right",
+          autoClose: 1500
+        });
 
       setTimeout(() => {
-        toast.success("Redirecting to View Notes");
+        toast.success("Redirecting to View Notes", {
+          position: "top-right",
+          autoClose: 1500
+        });
         setTimeout(() => {
             navigate("/view-notes");
         }, 1000);
-      }, 2000);
+      }, 1000);
 
     } catch (error) {
-      toast.error("Error adding note.");
+      toast.error("Error adding note.", {
+        position: "top-right",
+          autoClose: 1500
+        });
       setErrorMessages({
         error: error.response ? error.response.data.error : "Unknown error",
         message: error.message,
@@ -126,10 +138,36 @@ const AddNote = () => {
                   placeholder="Enter Content"
                   required
                   modules={modules}
-                  className="w-full"
+                  className="w-full text-white"
                 />
               </div>
+
+              <div className="flexcenter w-full mt-4">
+                <div className="p-7">
+                  <input 
+                    type="radio" 
+                    name="visibility" 
+                    value="private" 
+                    id="private" 
+                    checked={formData.visibility === "private"} 
+                    onChange={handleChange} 
+                  />
+                  <label className="text-white" htmlFor="private">Private</label>
+                </div>
+                <div className="p-7">
+                  <input 
+                    type="radio" 
+                    name="visibility" 
+                    value="public" 
+                    id="public" 
+                    checked={formData.visibility === "public"} 
+                    onChange={handleChange} 
+                  />
+                  <label className="text-white" htmlFor="public">Public</label>
+                </div>
+              </div>
             </div>
+
             <div className="button">
               <button type="submit" id="aButton" style={{ cursor: "pointer" }}>
                 Add Note
@@ -138,6 +176,7 @@ const AddNote = () => {
           </form>
         </div>
       </div>
+
     </div>
   );
 };

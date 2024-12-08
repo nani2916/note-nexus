@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Nav from "../components/Nav";
 import { BASE_URL } from "../config";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css"; // Ensure to import the CSS for the bubble theme
+import "react-quill/dist/quill.bubble.css"; 
 
 const ViewNote = () => {
   const { id } = useParams(); 
@@ -12,9 +12,8 @@ const ViewNote = () => {
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Define modules to include color options
   const modules = {
-    toolbar: false, // Disable toolbar in read-only mode
+    toolbar: false, 
   };
 
   useEffect(() => {
@@ -56,7 +55,7 @@ const ViewNote = () => {
                   readOnly={true}
                   theme="bubble"
                   modules={modules}
-                  className="h-48 mb-4"
+                  className="h-48 mb-4 text-white"
                 />
               </div>
             </div>

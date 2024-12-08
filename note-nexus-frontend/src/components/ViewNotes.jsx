@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Nav from "../components/Nav";
 import { BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
@@ -10,26 +11,48 @@ const ViewNotes = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const notesPerPage = 1;
+  const notesPerPage = 4;
   const navigate = useNavigate();
 
   const MAX_CONTENT_LENGTH = 20;
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchNotes = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/user/view-notes`);
-        setNotes(response.data.notes || []);
-        toast.success(response.data.message);
+        const uname = localStorage.getItem("username");
+        const response = await axios.get(`${BASE_URL}/api/user/view-notes`, {
+          params: { username: uname },
+        });
+
+        if (isMounted) {
+          setNotes(response.data.notes || []);
+          toast.success(response.data.message, {
+            position: "top-right",
+            autoClose: 1500,
+          });
+        }
       } catch (error) {
-        toast.error("Failed to fetch notes.");
+        if (isMounted) {
+          toast.error("Failed to fetch notes.", {
+            position: "top-right",
+            autoClose: 1500,
+          });
+        }
         console.error("Error fetching notes:", error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchNotes();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleEdit = (noteId) => navigate(`/edit-note/${noteId}`);
@@ -45,7 +68,7 @@ const ViewNotes = () => {
 
   const renderPagination = () => {
     const pages = [];
-    const maxPagesToShow = 3; // Number of pages to display
+    const maxPagesToShow = 3;
     const half = Math.floor(maxPagesToShow / 2);
 
     let startPage = Math.max(1, currentPage - half);
@@ -58,12 +81,20 @@ const ViewNotes = () => {
 
     if (startPage > 1) {
       pages.push(
-        <button key={1} onClick={() => changePage(1)} className="pagination-btn">
+        <button
+          key={1}
+          onClick={() => changePage(1)}
+          className="pagination-btn"
+        >
           1
         </button>
       );
       if (startPage > 2) {
-        pages.push(<span key="start-ellipsis" className="ellipsis">...</span>);
+        pages.push(
+          <span key="start-ellipsis" className="ellipsis">
+            ...
+          </span>
+        );
       }
     }
 
@@ -83,7 +114,11 @@ const ViewNotes = () => {
 
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        pages.push(<span key="end-ellipsis" className="ellipsis">...</span>);
+        pages.push(
+          <span key="end-ellipsis" className="ellipsis">
+            ...
+          </span>
+        );
       }
       pages.push(
         <button
@@ -153,26 +188,38 @@ const ViewNotes = () => {
                             onClick={() => handleView(note._id)}
                             className="mr-4 text-blue-500"
                           >
-                            <i className="fa fa-eye text-3xl" aria-hidden="true"></i>
+                            <i
+                              className="fa fa-eye text-3xl"
+                              aria-hidden="true"
+                            ></i>
                           </button>
                           <button
                             onClick={() => handleEdit(note._id)}
                             className="mr-4"
                           >
-                            <i className="fa fa-pencil text-3xl" aria-hidden="true"></i>
+                            <i
+                              className="fa fa-pencil text-3xl"
+                              aria-hidden="true"
+                            ></i>
                           </button>
                           <button
                             onClick={() => handleDelete(note._id)}
                             className="text-red-500"
                           >
-                            <i className="fa fa-trash text-3xl" aria-hidden="true"></i>
+                            <i
+                              className="fa fa-trash text-3xl"
+                              aria-hidden="true"
+                            ></i>
                           </button>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" style={{ textAlign: "center", padding: "10px" }}>
+                      <td
+                        colSpan="5"
+                        style={{ textAlign: "center", padding: "10px" }}
+                      >
                         No notes found.
                       </td>
                     </tr>
