@@ -113,7 +113,7 @@ const Login = () => {
       </div>
       <div className="signup">
         <div className="container">
-          <div className="title">Login to SmartBill</div>
+          <div className="title">Login to NoteNexus</div>
           <form id="my_login_form" onSubmit={handleSubmit}>
             <div className="user-details">
               <div className="input-box">
